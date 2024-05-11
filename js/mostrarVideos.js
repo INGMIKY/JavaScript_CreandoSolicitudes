@@ -4,7 +4,7 @@ const lista = document.querySelector("[data-lista]");
 
 
 // LA FORMA DEL INSTRUCTOR DE MOSTRAR LOS VIDEOS
-function crearCard(titulo, descripcion, url, imagen){
+export default function crearCard(titulo, descripcion, url, imagen){
     const video = document.createElement("li");
     video.className="videos__item";
     video.innerHTML=`<iframe width="100%" height="72%" src="${url}"
@@ -21,9 +21,14 @@ function crearCard(titulo, descripcion, url, imagen){
 }
 
 async function listarVideos(){
-    const listaAPI = await conexionAPI.listarVideos();
-
-    listaAPI.forEach(elemento => lista.appendChild(crearCard(elemento.titulo, elemento.descripcion, elemento.url, elemento.imagem)))
+    try{
+        const listaAPI = await conexionAPI.listarVideos();
+        listaAPI.forEach(elemento => lista.appendChild(crearCard(elemento.titulo, elemento.descripcion, elemento.url, elemento.imagem)));
+    }
+    catch(error){
+        lista.innerHTML=`<h2 class="mensaje__titulo"">Ha ocurrido un problema con la conexion :(</h2>`
+        console.log(error);
+    }
 
 }
 listarVideos()

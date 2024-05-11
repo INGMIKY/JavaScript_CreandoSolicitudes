@@ -1,18 +1,39 @@
 import { conexionAPI } from "./conexionAPI.js";
+import crearCard from "./mostrarVideos.js";
 
 async function filtrarVideo(evento){
     try{
         // Evitar que se recarge la pagina cuando se accione el evento
         evento.preventDefault();
         const datosDeBusqueda = document.querySelector("[data-busqueda]").value;
-        const busqueda = conexionAPI.buscarVideo(datosDeBusqueda);
+        const busqueda = await conexionAPI.buscarVideo(datosDeBusqueda);
 
-        console.log(busqueda);
+        const lista = document.querySelector("[data-lista]");
+
+        while(lista.firstChild){
+            lista.removeChild(lista.firstChild);
+        }
+
+        busqueda.forEach(video => lista.appendChild(crearCard(video.titulo, video.descripcion, video.url, video.imagem)));
+
+        if(busqueda.length==0){
+            lista.innerHTML=`<h2 class="mensaje__titulo">No fueron encontrados elementos para ${datosDeBusqueda}</h2>`;
+        }
+        // console.log(busqueda);
     }
     catch(error){
         console.log(error);
     }
 }
+
+const inputEle = document.getElementById('buscar');
+inputEle.addEventListener('keyup', function(e){
+  var key = e.which || e.keyCode;
+  if (key == 13) {
+    filtrarVideo(e)
+  }
+});
+
 
 
 const boton = document.querySelector("[data-boton-busqueda]");
